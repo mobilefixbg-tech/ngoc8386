@@ -1,4 +1,5 @@
 require("dotenv").config({ quiet: true })
+require('electron-reload')(__dirname);
 
 const { app, BrowserWindow, ipcMain, dialog } = require("electron")
 const
@@ -7,6 +8,13 @@ const { execFile, spawn } = require("node:child_process")
 const path = require("node:path")
 const fs = require("node:fs/promises")
 const http = require("node:http")
+
+let { autoUpdater } = require("electron-updater")
+
+autoUpdater.logger = require("electron-log")
+autoUpdater.logger.transports.file.level = "info"
+autoUpdater.autoDownload = false
+autoUpdater.autoInstallOnAppQuit = true
 
 const DEFAULT_AI_MODEL = "gpt-4o-mini"
 const DEFAULT_OLLAMA_HOST = String(process.env.OLLAMA_HOST || "http://127.0.0.1:11434")
@@ -1841,4 +1849,52 @@ ipcMain.handle("terminal:kill", async () => {
   } catch (err) {
     return { ok: false, error: err.message }
   }
+})
+
+ipcMain.handle("app:check-update", async () => {
+  try {
+    const result = await autoUpdater.checkForUpdates()
+    return result?.updateInfo?.version !== app.getVersion()
+  } catch (err) {
+    console.error("Check update error:", err)
+    return false
+  }
+})
+
+ipcMain.handle("app:download-update", async () => {
+  try {
+    await autoUpdater.downloadUpdate()
+    return { ok: true }
+  } catch (err) {
+    console.error("Download update error:", err)
+    throw err
+  }
+})
+
+ipcMain.handle("app:install-update", async () => {
+  try {
+    autoUpdater.quitAndInstall(false, true)
+    return { ok: true }
+  } catch (err) {
+    console.error("Install update error:", err)
+    throw err
+  }
+})
+
+autoUpdater.on("update-available", (info) => {
+  console.log("Update available:", info.version)
+  if (mainWindowRef) {
+    mainWindowRef.webContents.send("update:available", info)
+  }
+})
+
+autoUpdater.on("update-downloaded", (info) => {
+  console.log("Update downloaded:", info.version)
+  if (mainWindowRef) {
+    mainWindowRef.webContents.send("update:downloaded", info)
+  }
+})
+
+autoUpdater.on("error", (err) => {
+  console.error("AutoUpdater error:", err)
 })

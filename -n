@@ -1,0 +1,23 @@
+213:        .modal-title{font-weight:700;margin-bottom:8px}
+312:        .settings-tabs{
+319:        .settings-tab{
+328:        .settings-tab.active{
+333:        .settings-panel{display:none}
+334:        .settings-panel.show{display:block}
+335:        .settings-grid{
+401:            .settings-grid{grid-template-columns:1fr}
+451:        .dark .settings-tab{background:#111827;color:#e5e7eb;border-color:#374151}
+452:        .dark .settings-tab.active{background:#2563eb;color:#fff;border-color:#2563eb}
+453:        .dark .settings-tabs{border-color:#374151}
+540:        <div class="modal-title">Dán bảng KQXS để quét vé dò</div>
+550:        <div class="modal-title" id="lensResultTitle">Kết quả Lens</div>
+562:        <div class="modal-title">Cài đặt ứng dụng</div>
+563:        <div class="settings-tabs">
+564:            <button id="settingsTabUi" class="settings-tab active" onclick="switchSettingsTab('ui')">Giao diện</button>
+565:            <button id="settingsTabAi" class="settings-tab" onclick="switchSettingsTab('ai')">Công cụ AI</button>
+568:        <div id="settingsPanelUi" class="settings-panel show">
+569:            <div class="settings-grid">
+596:        <div id="settingsPanelAi" class="settings-panel">
+597:            <div class="settings-grid">
+638:        <div class="modal-title">LotoAI Nội Bộ</div>
+1364:      document.getElementById("settingsPanelAi").classList.toggle("show", isAi)
